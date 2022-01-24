@@ -185,7 +185,6 @@ function onLoad(character)
 			end
 		end)
 		if not success then
-			connection:Disconnect()
 			screenGui:Destroy()
 			game:GetService("StarterGui"):SetCore("SendNotification",{
 				Title = "FREESKILL";
@@ -194,6 +193,7 @@ function onLoad(character)
 				Duration = 10;
 			})
 			getgenv().executed = false
+			connection:Disconnect()
 		end
 	end)
 end
