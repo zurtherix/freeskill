@@ -1,7 +1,8 @@
 --[[getgenv().maximumDistance = 500
 getgenv().showHealth = true
 getgenv().showDistance = true
-getgenv().offsetY = 0 -- best change step = 0.1 (more = gui will be higher) (can be negative)--]]
+getgenv().offsetY = 0 -- best change step = 0.1 (more = gui will be higher) (can be negative)
+getgenv().autoExecuteOnFailNLoad = true--]]
 
 if getgenv().executed then
 	game:GetService("StarterGui"):SetCore("SendNotification",{
@@ -54,30 +55,40 @@ function onLoad(character)
 
 	local targets = {}
 
+	local connection2
+	connection2 = runService.Heartbeat:Connect(function()
+		for i, v in pairs(players:GetPlayers()) do
+			local passed = true
+			for __, vv in pairs(targets) do
+				if vv["name"] == v.Name then
+					passed = false
+					break
+				end
+			end
+			if v.Character and passed and v ~= player then
+				local hrp = v.Character:FindFirstChild("HumanoidRootPart")
+				local hum = v.Character:FindFirstChildWhichIsA("Humanoid")
+				if not hrp or not hum then
+					continue
+				end
+
+				local currentTable = {["name"] = v.Name, ["char"] = v.Character}
+				table.insert(targets, currentTable)
+			end
+		end
+	end)
+
 	local connection
 	connection = runService.RenderStepped:Connect(function()
 		local success, errorMessage = pcall(function()
-			for i, v in pairs(game:GetService("Workspace"):GetChildren()) do
-				if v == character then
-					continue
-				end
-				local checked = true
-				for _, vv in pairs(targets) do
-					if vv["char"] == v then
-						checked = false
-					end
-				end
-				if v:FindFirstChildWhichIsA("Humanoid") and checked then
-					if v:IsA("Model") then
-						local currentTable = {["name"] = v.Name, ["char"] = v}
-						table.insert(targets, currentTable)
-					end
-				end
-			end
 			for i, v in pairs(targets) do
 				if not v["label"] then
 					local char = v["char"]
-					local hrp = char:WaitForChild("HumanoidRootPart")
+					local hrp = char:FindFirstChild("HumanoidRootPart")
+
+					if not hrp then
+						return
+					end
 
 					local newLabel = Instance.new("TextLabel")
 					newLabel.Name = name2
@@ -120,17 +131,28 @@ function onLoad(character)
 					newLabel3.TextStrokeTransparency = 0
 
 					v["label"] = newLabel
-				else
-					if not v["char"]:IsDescendantOf(game:GetService("Workspace")) then
+				end
+				if v["label"] then
+					if not v["char"] or not v["char"]:IsDescendantOf(game:GetService("Workspace")) then
 						if v["label"] then
 							v["label"]:Destroy()
 						end
 						table.remove(targets, i)
-					else
+					elseif v["char"] and v["char"]:IsDescendantOf(game:GetService("Workspace")) then
 						local char = v["char"]
-						local hum = char:WaitForChild("Humanoid")
+						local hum = char:FindFirstChildWhichIsA("Humanoid")
+
+						if not hum then
+							continue
+						end
+
 						local tool = ""
-						local hrp = char:WaitForChild("HumanoidRootPart")
+						local hrp = char:FindFirstChild("HumanoidRootPart")
+
+						if not hrp then
+							continue
+						end
+
 						local vector, onScreen = camera:WorldToViewportPoint(char:WaitForChild("Head").Position)
 
 						local distance = (character:WaitForChild("HumanoidRootPart").Position - hrp.Position).Magnitude
@@ -188,20 +210,23 @@ function onLoad(character)
 			screenGui:Destroy()
 			game:GetService("StarterGui"):SetCore("SendNotification",{
 				Title = "FREESKILL";
-				Text = "Hmm... Something went wrong. Re-execute, if you want to continue.";
+				Text = "Hmm... Something went wrong.";
 				Icon = "";
 				Duration = 10;
 			})
 			getgenv().executed = false
 			connection:Disconnect()
+			connection2:Disconnect()
 		end
 	end)
 end
 
-player.CharacterAdded:Connect(function(character)
-	onLoad(character)
-end)
-
 if player.Character or player.CharacterAdded:Wait() then
 	onLoad(player.Character)
 end
+
+player.CharacterAdded:Connect(function(addedChar)
+	if getgenv().autoExecuteOnFailNLoad then
+		onLoad(addedChar)
+	end
+end)
