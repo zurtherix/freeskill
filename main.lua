@@ -1,11 +1,11 @@
---[[getgenv().maximumDistance = 500
-getgenv().showHealth = true
-getgenv().showDistance = true
-getgenv().boxEspColor = Color3.fromRGB(255, 255, 255)
-getgenv().boxEspTransparency = 0.7
-getgenv().offsetY = 0 -- best change step = 0.1 (more = gui will be higher) (can be negative)--]]
+--[[getfenv().maximumDistance = 500
+getfenv().showHealth = true
+getfenv().showDistance = true
+getfenv().boxEspColor = Color3.fromRGB(255, 255, 255)
+getfenv().boxEspTransparency = 0.7
+getfenv().offsetY = 0 -- best change step = 0.1 (more = gui will be higher) (can be negative)--]]
 
-if getgenv().executed then
+if getfenv().executed then
 	game:GetService("StarterGui"):SetCore("SendNotification",{
 		Title = "FREESKILL";
 		Text = "Already executed.";
@@ -15,7 +15,7 @@ if getgenv().executed then
 	return
 end
 
-getgenv().executed = true
+getfenv().executed = true
 
 local players = game:GetService("Players")
 local player = players.LocalPlayer
@@ -55,7 +55,7 @@ function onLoad(character)
 	frame.BackgroundTransparency = 1
 
 	local targets = {}
-
+	
 	local connection
 	connection = runService.RenderStepped:Connect(function()
 		local success, errorMessage = pcall(function()
@@ -80,7 +80,7 @@ function onLoad(character)
 				if not v["label"] then
 					local char = v["char"]
 					local hrp = char:WaitForChild("HumanoidRootPart")
-
+					
 					local newLabel = Instance.new("TextLabel")
 					newLabel.Name = name2
 					newLabel.Parent = frame
@@ -100,7 +100,7 @@ function onLoad(character)
 					newLabel2.AnchorPoint = Vector2.new(0.5, 0)
 					newLabel2.Size = UDim2.new(0.6,0,0.6,0)
 					newLabel2.BackgroundTransparency = 1
-					newLabel2.Position = UDim2.new(0.5,0,-0.8 - getgenv().offsetY,0)
+					newLabel2.Position = UDim2.new(0.5,0,-0.8 - getfenv().offsetY,0)
 					newLabel2.TextScaled = true
 
 					newLabel2.Font = Enum.Font.RobotoMono
@@ -114,18 +114,18 @@ function onLoad(character)
 					newLabel3.AnchorPoint = Vector2.new(0.5, 0)
 					newLabel3.Size = UDim2.new(0.6,0,0.6,0)
 					newLabel3.BackgroundTransparency = 1
-					newLabel3.Position = UDim2.new(0.5,0,-0.4 - getgenv().offsetY,0)
+					newLabel3.Position = UDim2.new(0.5,0,-0.4 - getfenv().offsetY,0)
 					newLabel3.TextScaled = true
 
 					newLabel3.Font = Enum.Font.RobotoMono
 					newLabel3.TextTransparency = 0
 					newLabel3.TextStrokeTransparency = 0
-
+					
 					local newBox = Instance.new("BoxHandleAdornment")
 					newBox.Name = name2
 					newBox.Parent = newLabel
-					newBox.Color3 = getgenv().boxEspColor
-					newBox.Transparency = getgenv().boxEspTransparency
+					newBox.Color3 = getfenv().boxEspColor
+					newBox.Transparency = getfenv().boxEspTransparency
 					newBox.Adornee = hrp
 					newBox.Size = hrp.Size
 					newBox.ZIndex = 0
@@ -169,26 +169,26 @@ function onLoad(character)
 						v["label"][name].Text = math.floor(hum.Health + 0.5)
 						v["label"][name2].Text = math.floor(distance + 0.5)
 						v["label"].Position = UDim2.fromOffset(vector.X, vector.Y)
-
+						
 						if 1/vector.Z < 0.04 then
 							v["label"].Size = UDim2.new(0.04,0,0.04,0)
 						else
 							v["label"].Size = UDim2.new(1/vector.Z,0,1/vector.Z,0)
 						end
-
-						if getgenv().showHealth then
+						
+						if getfenv().showHealth then
 							v["label"][name].Visible = true
 						else
 							v["label"][name].Visible = false
 						end
-
-						if getgenv().showDistance then
+						
+						if getfenv().showDistance then
 							v["label"][name2].Visible = true
 						else
 							v["label"][name2].Visible = false
 						end
-
-						if onScreen and distance <= getgenv().maximumDistance then
+						
+						if onScreen and distance <= getfenv().maximumDistance then
 							v["label"].Visible = true
 						else
 							v["label"].Visible = false
@@ -198,6 +198,7 @@ function onLoad(character)
 			end
 		end)
 		if not success then
+			print(errorMessage)
 			connection:Disconnect()
 			screenGui:Destroy()
 			game:GetService("StarterGui"):SetCore("SendNotification",{
@@ -206,7 +207,7 @@ function onLoad(character)
 				Icon = "";
 				Duration = 10;
 			})
-			getgenv().executed = false
+			getfenv().executed = false
 		end
 	end)
 end
