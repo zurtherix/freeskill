@@ -1,21 +1,22 @@
---[[getfenv().maximumDistance = 500
-getfenv().showHealth = true
-getfenv().showDistance = true
-getfenv().offsetY = 0 -- best change step = 0.1 (more = gui will be higher) (can be negative)
-getfenv().autoExecuteOnFailNLoad = true
-getfenv().smoothness = true--]]
+--[[getgenv().maximumDistance = 500
+getgenv().showHealth = true
+getgenv().showDistance = true
+getgenv().offsetY = 0 -- best change step = 0.1 (more = gui will be higher) (can be negative)
+getgenv().autoExecuteOnFailNLoad = true
+getgenv().smoothness = true--]]
 
-if getfenv().executed then
-	getfenv().executed = false
+if getgenv().executed then
+	getgenv().executed = false
 	game:GetService("StarterGui"):SetCore("SendNotification",{
 		Title = "FREESKILL";
-		Text = "Disabled.";
+		Text = "Re-executed.";
 		Icon = "";
 		Duration = 3;
 	})
-	return
+	task.wait(0.5)
+	getgenv().executed = true
 else
-	getfenv().executed = true
+	getgenv().executed = true
 	game:GetService("StarterGui"):SetCore("SendNotification",{
 		Title = "FREESKILL";
 		Text = "Executed.";
@@ -88,7 +89,7 @@ function onLoad(character)
 	
 	local connection
 	coroutine.wrap(function()
-		if getfenv().smoothness then
+		if getgenv().smoothness then
 			connection = runService.RenderStepped:Connect(function()
 				local success, errorMessage = pcall(function()
 					for i, v in pairs(targets) do
@@ -119,7 +120,7 @@ function onLoad(character)
 							newLabel2.AnchorPoint = Vector2.new(0.5, 0)
 							newLabel2.Size = UDim2.new(0.6,0,0.6,0)
 							newLabel2.BackgroundTransparency = 1
-							newLabel2.Position = UDim2.new(0.5,0,-0.8 - getfenv().offsetY,0)
+							newLabel2.Position = UDim2.new(0.5,0,-0.8 - getgenv().offsetY,0)
 							newLabel2.TextScaled = true
 
 							newLabel2.Font = Enum.Font.RobotoMono
@@ -133,7 +134,7 @@ function onLoad(character)
 							newLabel3.AnchorPoint = Vector2.new(0.5, 0)
 							newLabel3.Size = UDim2.new(0.6,0,0.6,0)
 							newLabel3.BackgroundTransparency = 1
-							newLabel3.Position = UDim2.new(0.5,0,-0.4 - getfenv().offsetY,0)
+							newLabel3.Position = UDim2.new(0.5,0,-0.4 - getgenv().offsetY,0)
 							newLabel3.TextScaled = true
 
 							newLabel3.Font = Enum.Font.RobotoMono
@@ -195,19 +196,19 @@ function onLoad(character)
 									v["label"].Size = UDim2.new(1/vector.Z,0,1/vector.Z,0)
 								end
 
-								if getfenv().showHealth then
+								if getgenv().showHealth then
 									v["label"][name].Visible = true
 								else
 									v["label"][name].Visible = false
 								end
 
-								if getfenv().showDistance then
+								if getgenv().showDistance then
 									v["label"][name2].Visible = true
 								else
 									v["label"][name2].Visible = false
 								end
 
-								if onScreen and distance <= getfenv().maximumDistance then
+								if onScreen and distance <= getgenv().maximumDistance then
 									v["label"].Visible = true
 								else
 									v["label"].Visible = false
@@ -216,7 +217,7 @@ function onLoad(character)
 						end
 					end
 				end)
-				if not success or not getfenv().executed then
+				if not success or not getgenv().executed then
 					screenGui:Destroy()
 					game:GetService("StarterGui"):SetCore("SendNotification",{
 						Title = "FREESKILL";
@@ -224,7 +225,7 @@ function onLoad(character)
 						Icon = "";
 						Duration = 10;
 					})
-					getfenv().executed = false
+					getgenv().executed = false
 					connection:Disconnect()
 					connection2:Disconnect()
 					return false
@@ -262,7 +263,7 @@ function onLoad(character)
 							newLabel2.AnchorPoint = Vector2.new(0.5, 0)
 							newLabel2.Size = UDim2.new(0.6,0,0.6,0)
 							newLabel2.BackgroundTransparency = 1
-							newLabel2.Position = UDim2.new(0.5,0,-0.8 - getfenv().offsetY,0)
+							newLabel2.Position = UDim2.new(0.5,0,-0.8 - getgenv().offsetY,0)
 							newLabel2.TextScaled = true
 
 							newLabel2.Font = Enum.Font.RobotoMono
@@ -276,7 +277,7 @@ function onLoad(character)
 							newLabel3.AnchorPoint = Vector2.new(0.5, 0)
 							newLabel3.Size = UDim2.new(0.6,0,0.6,0)
 							newLabel3.BackgroundTransparency = 1
-							newLabel3.Position = UDim2.new(0.5,0,-0.4 - getfenv().offsetY,0)
+							newLabel3.Position = UDim2.new(0.5,0,-0.4 - getgenv().offsetY,0)
 							newLabel3.TextScaled = true
 
 							newLabel3.Font = Enum.Font.RobotoMono
@@ -338,19 +339,19 @@ function onLoad(character)
 									v["label"].Size = UDim2.new(1/vector.Z,0,1/vector.Z,0)
 								end
 
-								if getfenv().showHealth then
+								if getgenv().showHealth then
 									v["label"][name].Visible = true
 								else
 									v["label"][name].Visible = false
 								end
 
-								if getfenv().showDistance then
+								if getgenv().showDistance then
 									v["label"][name2].Visible = true
 								else
 									v["label"][name2].Visible = false
 								end
 
-								if onScreen and distance <= getfenv().maximumDistance then
+								if onScreen and distance <= getgenv().maximumDistance then
 									v["label"].Visible = true
 								else
 									v["label"].Visible = false
@@ -359,7 +360,7 @@ function onLoad(character)
 						end
 					end
 				end)
-				if not success or not getfenv().executed then
+				if not success or not getgenv().executed then
 					screenGui:Destroy()
 					game:GetService("StarterGui"):SetCore("SendNotification",{
 						Title = "FREESKILL";
@@ -367,7 +368,7 @@ function onLoad(character)
 						Icon = "";
 						Duration = 10;
 					})
-					getfenv().executed = false
+					getgenv().executed = false
 					connection2:Disconnect()
 					return false
 				end	
@@ -381,7 +382,7 @@ if player.Character or player.CharacterAdded:Wait() then
 end
 
 player.CharacterAdded:Connect(function(addedChar)
-	if getfenv().autoExecuteOnFailNLoad then
+	if getgenv().autoExecuteOnFailNLoad then
 		onLoad(addedChar)
 	end
 end)
