@@ -1,20 +1,25 @@
---[[getgenv().maximumDistance = 500
-getgenv().showHealth = true
-getgenv().showDistance = true
-getgenv().offsetY = 0 -- best change step = 0.1 (more = gui will be higher) (can be negative)
-getgenv().autoExecuteOnFailNLoad = true--]]
+--[[getfenv().maximumDistance = 500
+getfenv().showHealth = true
+getfenv().showDistance = true
+getfenv().offsetY = 0 -- best change step = 0.1 (more = gui will be higher) (can be negative)
+getfenv().autoExecuteOnFailNLoad = true
+getfenv().smoothness = true--]]
 
-if getgenv().executed then
+if getfenv().executed then
+	getfenv().executed = false
+	task.wait(0.5)
 	game:GetService("StarterGui"):SetCore("SendNotification",{
 		Title = "FREESKILL";
-		Text = "Already executed.";
+		Text = "Re-executed.";
 		Icon = "";
 		Duration = 3;
 	})
+	task.wait(0.5)
+	getfenv().executed = true
 	return
+else
+	getfenv().executed = true
 end
-
-getgenv().executed = true
 
 local players = game:GetService("Players")
 local player = players.LocalPlayer
@@ -54,7 +59,7 @@ function onLoad(character)
 	frame.BackgroundTransparency = 1
 
 	local targets = {}
-
+	
 	local connection2
 	connection2 = runService.Heartbeat:Connect(function()
 		for i, v in pairs(players:GetPlayers()) do
@@ -77,148 +82,293 @@ function onLoad(character)
 			end
 		end
 	end)
-
+	
+	local connection
 	coroutine.wrap(function()
-		while true do
-			task.wait(0.05)
-			local success, errorMessage = pcall(function()
-			for i, v in pairs(targets) do
-				if not v["label"] then
-					local char = v["char"]
-					local hrp = char:FindFirstChild("HumanoidRootPart")
+		if getfenv().smoothness then
+			connection = runService.RenderStepped:Connect(function()
+				local success, errorMessage = pcall(function()
+					for i, v in pairs(targets) do
+						if not v["label"] then
+							local char = v["char"]
+							local hrp = char:FindFirstChild("HumanoidRootPart")
 
-					if not hrp then
-						return
-					end
+							if not hrp then
+								return
+							end
 
-					local newLabel = Instance.new("TextLabel")
-					newLabel.Name = name2
-					newLabel.Parent = frame
-					newLabel.AnchorPoint = Vector2.new(0.5, 1)
-					newLabel.BackgroundTransparency = 1
-					newLabel.Text = v["name"]
-					newLabel.Size = UDim2.new(1,0,1,0)
-					newLabel.TextScaled = true
+							local newLabel = Instance.new("TextLabel")
+							newLabel.Name = name2
+							newLabel.Parent = frame
+							newLabel.AnchorPoint = Vector2.new(0.5, 1)
+							newLabel.BackgroundTransparency = 1
+							newLabel.Text = v["name"]
+							newLabel.Size = UDim2.new(1,0,1,0)
+							newLabel.TextScaled = true
 
-					newLabel.Font = Enum.Font.Code
-					newLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-					newLabel.TextStrokeTransparency = 0
+							newLabel.Font = Enum.Font.Code
+							newLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+							newLabel.TextStrokeTransparency = 0
 
-					local newLabel2 = Instance.new("TextLabel")
-					newLabel2.Parent = newLabel
-					newLabel2.Name = name2
-					newLabel2.AnchorPoint = Vector2.new(0.5, 0)
-					newLabel2.Size = UDim2.new(0.6,0,0.6,0)
-					newLabel2.BackgroundTransparency = 1
-					newLabel2.Position = UDim2.new(0.5,0,-0.8 - getgenv().offsetY,0)
-					newLabel2.TextScaled = true
+							local newLabel2 = Instance.new("TextLabel")
+							newLabel2.Parent = newLabel
+							newLabel2.Name = name2
+							newLabel2.AnchorPoint = Vector2.new(0.5, 0)
+							newLabel2.Size = UDim2.new(0.6,0,0.6,0)
+							newLabel2.BackgroundTransparency = 1
+							newLabel2.Position = UDim2.new(0.5,0,-0.8 - getfenv().offsetY,0)
+							newLabel2.TextScaled = true
 
-					newLabel2.Font = Enum.Font.RobotoMono
-					newLabel2.TextColor3 = Color3.fromRGB(177, 177, 177)
-					newLabel2.TextTransparency = 0
-					newLabel2.TextStrokeTransparency = 0
+							newLabel2.Font = Enum.Font.RobotoMono
+							newLabel2.TextColor3 = Color3.fromRGB(177, 177, 177)
+							newLabel2.TextTransparency = 0
+							newLabel2.TextStrokeTransparency = 0
 
-					local newLabel3 = Instance.new("TextLabel")
-					newLabel3.Parent = newLabel
-					newLabel3.Name = name
-					newLabel3.AnchorPoint = Vector2.new(0.5, 0)
-					newLabel3.Size = UDim2.new(0.6,0,0.6,0)
-					newLabel3.BackgroundTransparency = 1
-					newLabel3.Position = UDim2.new(0.5,0,-0.4 - getgenv().offsetY,0)
-					newLabel3.TextScaled = true
+							local newLabel3 = Instance.new("TextLabel")
+							newLabel3.Parent = newLabel
+							newLabel3.Name = name
+							newLabel3.AnchorPoint = Vector2.new(0.5, 0)
+							newLabel3.Size = UDim2.new(0.6,0,0.6,0)
+							newLabel3.BackgroundTransparency = 1
+							newLabel3.Position = UDim2.new(0.5,0,-0.4 - getfenv().offsetY,0)
+							newLabel3.TextScaled = true
 
-					newLabel3.Font = Enum.Font.RobotoMono
-					newLabel3.TextTransparency = 0
-					newLabel3.TextStrokeTransparency = 0
+							newLabel3.Font = Enum.Font.RobotoMono
+							newLabel3.TextTransparency = 0
+							newLabel3.TextStrokeTransparency = 0
 
-					v["label"] = newLabel
-				end
-				if v["label"] then
-					if not v["char"] or not v["char"]:IsDescendantOf(game:GetService("Workspace")) then
+							v["label"] = newLabel
+						end
 						if v["label"] then
-							v["label"]:Destroy()
-						end
-						table.remove(targets, i)
-					elseif v["char"] and v["char"]:IsDescendantOf(game:GetService("Workspace")) then
-						local char = v["char"]
-						local hum = char:FindFirstChildWhichIsA("Humanoid")
+							if not v["char"] or not v["char"]:IsDescendantOf(game:GetService("Workspace")) then
+								if v["label"] then
+									v["label"]:Destroy()
+								end
+								table.remove(targets, i)
+							elseif v["char"] and v["char"]:IsDescendantOf(game:GetService("Workspace")) then
+								local char = v["char"]
+								local hum = char:FindFirstChildWhichIsA("Humanoid")
 
-						if not hum then
-							continue
-						end
+								if not hum then
+									continue
+								end
 
-						local tool = ""
-						local hrp = char:FindFirstChild("HumanoidRootPart")
+								local tool = ""
+								local hrp = char:FindFirstChild("HumanoidRootPart")
 
-						if not hrp then
-							continue
-						end
+								if not hrp then
+									continue
+								end
 
-						local vector, onScreen = camera:WorldToViewportPoint(hrp.Position)
+								local vector, onScreen = camera:WorldToViewportPoint(hrp.Position)
 
-						local distance = (character:WaitForChild("HumanoidRootPart").Position - hrp.Position).Magnitude
+								local distance = (character:WaitForChild("HumanoidRootPart").Position - hrp.Position).Magnitude
 
-						for i, v in pairs(char:GetChildren()) do
-							if v:IsA("Tool") then
-								tool = v.Name
-								break
+								for i, v in pairs(char:GetChildren()) do
+									if v:IsA("Tool") then
+										tool = v.Name
+										break
+									end
+								end
+
+								if tool ~= "" then
+									v["label"].Text = v["name"] .. " | " .. tool
+								else
+									v["label"].Text = v["name"]
+								end
+
+								local color1 = Color3.fromRGB(227, 70, 49)
+								local color2 = Color3.fromRGB(71, 177, 71)
+								local newColor = color1:lerp(color2, hum.Health/hum.MaxHealth)
+
+								v["label"][name].TextColor3 = newColor
+								v["label"][name].Text = math.floor(hum.Health + 0.5)
+								v["label"][name2].Text = math.floor(distance + 0.5)
+								v["label"].Position = UDim2.fromOffset(vector.X, vector.Y)
+
+								if 1/vector.Z < 0.04 then
+									v["label"].Size = UDim2.new(0.04,0,0.04,0)
+								else
+									v["label"].Size = UDim2.new(1/vector.Z,0,1/vector.Z,0)
+								end
+
+								if getfenv().showHealth then
+									v["label"][name].Visible = true
+								else
+									v["label"][name].Visible = false
+								end
+
+								if getfenv().showDistance then
+									v["label"][name2].Visible = true
+								else
+									v["label"][name2].Visible = false
+								end
+
+								if onScreen and distance <= getfenv().maximumDistance then
+									v["label"].Visible = true
+								else
+									v["label"].Visible = false
+								end
 							end
 						end
+					end
+				end)
+				if not success or not getfenv().executed then
+					screenGui:Destroy()
+					game:GetService("StarterGui"):SetCore("SendNotification",{
+						Title = "FREESKILL";
+						Text = "Hmm... Something went wrong.";
+						Icon = "";
+						Duration = 10;
+					})
+					getfenv().executed = false
+					connection:Disconnect()
+					connection2:Disconnect()
+					return false
+				end
+			end)
+		else
+			while true do
+				task.wait(0.05)
+				local success, errorMessage = pcall(function()
+					for i, v in pairs(targets) do
+						if not v["label"] then
+							local char = v["char"]
+							local hrp = char:FindFirstChild("HumanoidRootPart")
 
-						if tool ~= "" then
-							v["label"].Text = v["name"] .. " | " .. tool
-						else
-							v["label"].Text = v["name"]
+							if not hrp then
+								return
+							end
+
+							local newLabel = Instance.new("TextLabel")
+							newLabel.Name = name2
+							newLabel.Parent = frame
+							newLabel.AnchorPoint = Vector2.new(0.5, 1)
+							newLabel.BackgroundTransparency = 1
+							newLabel.Text = v["name"]
+							newLabel.Size = UDim2.new(1,0,1,0)
+							newLabel.TextScaled = true
+
+							newLabel.Font = Enum.Font.Code
+							newLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+							newLabel.TextStrokeTransparency = 0
+
+							local newLabel2 = Instance.new("TextLabel")
+							newLabel2.Parent = newLabel
+							newLabel2.Name = name2
+							newLabel2.AnchorPoint = Vector2.new(0.5, 0)
+							newLabel2.Size = UDim2.new(0.6,0,0.6,0)
+							newLabel2.BackgroundTransparency = 1
+							newLabel2.Position = UDim2.new(0.5,0,-0.8 - getfenv().offsetY,0)
+							newLabel2.TextScaled = true
+
+							newLabel2.Font = Enum.Font.RobotoMono
+							newLabel2.TextColor3 = Color3.fromRGB(177, 177, 177)
+							newLabel2.TextTransparency = 0
+							newLabel2.TextStrokeTransparency = 0
+
+							local newLabel3 = Instance.new("TextLabel")
+							newLabel3.Parent = newLabel
+							newLabel3.Name = name
+							newLabel3.AnchorPoint = Vector2.new(0.5, 0)
+							newLabel3.Size = UDim2.new(0.6,0,0.6,0)
+							newLabel3.BackgroundTransparency = 1
+							newLabel3.Position = UDim2.new(0.5,0,-0.4 - getfenv().offsetY,0)
+							newLabel3.TextScaled = true
+
+							newLabel3.Font = Enum.Font.RobotoMono
+							newLabel3.TextTransparency = 0
+							newLabel3.TextStrokeTransparency = 0
+
+							v["label"] = newLabel
 						end
+						if v["label"] then
+							if not v["char"] or not v["char"]:IsDescendantOf(game:GetService("Workspace")) then
+								if v["label"] then
+									v["label"]:Destroy()
+								end
+								table.remove(targets, i)
+							elseif v["char"] and v["char"]:IsDescendantOf(game:GetService("Workspace")) then
+								local char = v["char"]
+								local hum = char:FindFirstChildWhichIsA("Humanoid")
 
-						local color1 = Color3.fromRGB(227, 70, 49)
-						local color2 = Color3.fromRGB(71, 177, 71)
-						local newColor = color1:lerp(color2, hum.Health/hum.MaxHealth)
+								if not hum then
+									continue
+								end
 
-						v["label"][name].TextColor3 = newColor
-						v["label"][name].Text = math.floor(hum.Health + 0.5)
-						v["label"][name2].Text = math.floor(distance + 0.5)
-						v["label"].Position = UDim2.fromOffset(vector.X, vector.Y)
+								local tool = ""
+								local hrp = char:FindFirstChild("HumanoidRootPart")
 
-						if 1/vector.Z < 0.04 then
-							v["label"].Size = UDim2.new(0.04,0,0.04,0)
-						else
-							v["label"].Size = UDim2.new(1/vector.Z,0,1/vector.Z,0)
-						end
+								if not hrp then
+									continue
+								end
 
-						if getgenv().showHealth then
-							v["label"][name].Visible = true
-						else
-							v["label"][name].Visible = false
-						end
+								local vector, onScreen = camera:WorldToViewportPoint(hrp.Position)
 
-						if getgenv().showDistance then
-							v["label"][name2].Visible = true
-						else
-							v["label"][name2].Visible = false
-						end
+								local distance = (character:WaitForChild("HumanoidRootPart").Position - hrp.Position).Magnitude
 
-						if onScreen and distance <= getgenv().maximumDistance then
-							v["label"].Visible = true
-						else
-							v["label"].Visible = false
+								for i, v in pairs(char:GetChildren()) do
+									if v:IsA("Tool") then
+										tool = v.Name
+										break
+									end
+								end
+
+								if tool ~= "" then
+									v["label"].Text = v["name"] .. " | " .. tool
+								else
+									v["label"].Text = v["name"]
+								end
+
+								local color1 = Color3.fromRGB(227, 70, 49)
+								local color2 = Color3.fromRGB(71, 177, 71)
+								local newColor = color1:lerp(color2, hum.Health/hum.MaxHealth)
+
+								v["label"][name].TextColor3 = newColor
+								v["label"][name].Text = math.floor(hum.Health + 0.5)
+								v["label"][name2].Text = math.floor(distance + 0.5)
+								v["label"].Position = UDim2.fromOffset(vector.X, vector.Y)
+
+								if 1/vector.Z < 0.04 then
+									v["label"].Size = UDim2.new(0.04,0,0.04,0)
+								else
+									v["label"].Size = UDim2.new(1/vector.Z,0,1/vector.Z,0)
+								end
+
+								if getfenv().showHealth then
+									v["label"][name].Visible = true
+								else
+									v["label"][name].Visible = false
+								end
+
+								if getfenv().showDistance then
+									v["label"][name2].Visible = true
+								else
+									v["label"][name2].Visible = false
+								end
+
+								if onScreen and distance <= getfenv().maximumDistance then
+									v["label"].Visible = true
+								else
+									v["label"].Visible = false
+								end
+							end
 						end
 					end
-				end
+				end)
+				if not success or not getfenv().executed then
+					screenGui:Destroy()
+					game:GetService("StarterGui"):SetCore("SendNotification",{
+						Title = "FREESKILL";
+						Text = "Hmm... Something went wrong.";
+						Icon = "";
+						Duration = 10;
+					})
+					getfenv().executed = false
+					connection2:Disconnect()
+					return false
+				end	
 			end
-		end)
-		if not success then
-			screenGui:Destroy()
-			game:GetService("StarterGui"):SetCore("SendNotification",{
-				Title = "FREESKILL";
-				Text = "Hmm... Something went wrong.";
-				Icon = "";
-				Duration = 10;
-			})
-			getgenv().executed = false
-			connection2:Disconnect()
-			return false
-		end	
 		end
 	end)()
 end
@@ -228,7 +378,7 @@ if player.Character or player.CharacterAdded:Wait() then
 end
 
 player.CharacterAdded:Connect(function(addedChar)
-	if getgenv().autoExecuteOnFailNLoad then
+	if getfenv().autoExecuteOnFailNLoad then
 		onLoad(addedChar)
 	end
 end)
