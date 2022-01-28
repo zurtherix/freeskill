@@ -9,25 +9,11 @@ if getfenv().executed then
 	getfenv().executed = false
 	game:GetService("StarterGui"):SetCore("SendNotification",{
 		Title = "FREESKILL";
-		Text = "Re-executing...";
+		Text = "Disabled.";
 		Icon = "";
 		Duration = 3;
 	})
-	task.wait(1)
-	game:GetService("StarterGui"):SetCore("SendNotification",{
-		Title = "FREESKILL";
-		Text = "Disabled script.";
-		Icon = "";
-		Duration = 3;
-	})
-	task.wait(1)
-	game:GetService("StarterGui"):SetCore("SendNotification",{
-		Title = "FREESKILL";
-		Text = "Executed.";
-		Icon = "";
-		Duration = 3;
-	})
-	getfenv().executed = true
+	return
 else
 	getfenv().executed = true
 	game:GetService("StarterGui"):SetCore("SendNotification",{
