@@ -7,18 +7,21 @@ getfenv().smoothness = true--]]
 
 if getfenv().executed then
 	getfenv().executed = false
-	task.wait(0.5)
 	game:GetService("StarterGui"):SetCore("SendNotification",{
 		Title = "FREESKILL";
-		Text = "Re-executed.";
+		Text = "Script removed.";
 		Icon = "";
 		Duration = 3;
 	})
-	task.wait(0.5)
-	getfenv().executed = true
 	return
 else
 	getfenv().executed = true
+	game:GetService("StarterGui"):SetCore("SendNotification",{
+		Title = "FREESKILL";
+		Text = "Executed.";
+		Icon = "";
+		Duration = 3;
+	})
 end
 
 local players = game:GetService("Players")
