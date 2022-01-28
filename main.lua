@@ -80,6 +80,7 @@ function onLoad(character)
 
 	coroutine.wrap(function()
 		while true do
+			task.wait(0.05)
 			local success, errorMessage = pcall(function()
 			for i, v in pairs(targets) do
 				if not v["label"] then
