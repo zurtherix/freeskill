@@ -78,9 +78,9 @@ function onLoad(character)
 		end
 	end)
 
-	local connection
-	connection = runService.RenderStepped:Connect(function()
-		local success, errorMessage = pcall(function()
+	coroutine.wrap(function()
+		while true do
+			local success, errorMessage = pcall(function()
 			for i, v in pairs(targets) do
 				if not v["label"] then
 					local char = v["char"]
@@ -153,7 +153,7 @@ function onLoad(character)
 							continue
 						end
 
-						local vector, onScreen = camera:WorldToViewportPoint(char:WaitForChild("Head").Position)
+						local vector, onScreen = camera:WorldToViewportPoint(hrp.Position)
 
 						local distance = (character:WaitForChild("HumanoidRootPart").Position - hrp.Position).Magnitude
 
@@ -215,10 +215,11 @@ function onLoad(character)
 				Duration = 10;
 			})
 			getgenv().executed = false
-			connection:Disconnect()
 			connection2:Disconnect()
+			return false
+		end	
 		end
-	end)
+	end)()
 end
 
 if player.Character or player.CharacterAdded:Wait() then
